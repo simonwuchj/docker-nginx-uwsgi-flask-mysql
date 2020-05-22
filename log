@@ -1,0 +1,20 @@
+Step 1/15 : FROM python:3.5
+ ---> 2b343aee7aee
+Step 2/15 : RUN pip install uwsgi
+ ---> Running in ceb4dec5af35
+Collecting uwsgi
+  Downloading uwsgi-2.0.18.tar.gz (801 kB)
+Building wheels for collected packages: uwsgi
+  Building wheel for uwsgi (setup.py): started
+  Building wheel for uwsgi (setup.py): finished with status 'done'
+  Created wheel for uwsgi: filename=uWSGI-2.0.18-cp35-cp35m-linux_x86_64.whl size=580181 sha256=e87e737ead8861eeb6d44ac05f9cdbbbf6f7388035bed1f510de31e0e2b749bd
+  Stored in directory: /root/.cache/pip/wheels/13/e2/c3/d4cf606ea1edf50361e0fd05616949257149fad8a85a5ddbbe
+Successfully built uwsgi
+Installing collected packages: uwsgi
+Successfully installed uwsgi-2.0.18
+Removing intermediate container ceb4dec5af35
+ ---> bbf7f2165c3d
+Step 3/15 : RUN sudo apt install curl gnupg2 ca-certificates lsb-release 	&& echo "deb http://nginx.org/packages/ubuntu `lsb_release -cs` nginx" 	&& curl -fsSL https://nginx.org/keys/nginx_signing.key | sudo apt-key add - 	&& sudo apt-key fingerprint ABF5BD827BD9BF62 	&& apt-get update 	&& apt-get install nginx 	&& rm -rf /var/lib/apt/lists/*
+ ---> Running in b9f67e6a79b6
+[91m/bin/sh: 1: sudo: not found
+[0m

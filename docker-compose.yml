@@ -1,0 +1,28 @@
+version: '2'
+
+services:
+  mysql:
+    restart: always
+    image: mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=demo
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  flask-wsgi:
+    restart: always
+    build:
+      context: ./nginx-flask
+      dockerfile: DockerFile
+    image: nginx-flask
+    depends_on:
+      - mysql
+    links:
+      - mysql
+    volumes:
+      - ./nginx-flask/webapp:/webapp
+    ports:
+      - "80:80"
+      - "443:443"

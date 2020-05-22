@@ -1,0 +1,43 @@
+FROM python:3.5
+
+# Install uWSGI
+RUN pip install uwsgi
+
+# ENV NGINX_VERSION 1.9.11-1
+
+RUN apt-get -y update \
+	&& apt install -y curl gnupg2 ca-certificates lsb-release \
+	&& echo "deb http://nginx.org/packages/ubuntu `lsb_release -cs` nginx" | tee /etc/apt/sources.list.d/nginx.list \
+	&& curl -fsSL https://nginx.org/keys/nginx_signing.key | apt-key add - \
+	&& apt-key fingerprint ABF5BD827BD9BF62 \
+	&& apt-get install -y nginx
+	# && rm -rf /var/lib/apt/lists/*
+	
+# forward request and error logs to docker log collector
+RUN ln -sf /dev/stdout /var/log/nginx/access.log \
+	&& ln -sf /dev/stderr /var/log/nginx/error.log
+EXPOSE 80 443
+# Finished setting up Nginx
+
+# Make NGINX run on the foreground
+RUN echo "daemon off;" >> /etc/nginx/nginx.conf
+# Copy the modified Nginx conf
+COPY nginx.conf /etc/nginx/conf.d/
+
+#python requirements
+COPY requirements.txt /requirements.txt
+RUN pip install -r requirements.txt \
+	&& rm -rf /requirements.txt
+
+# Install Supervisord
+RUN apt-get install -y supervisor \
+	&& rm -rf /var/lib/apt/lists/*
+# Custom Supervisord config
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+#COPY /webapp /webapp
+RUN mkdir /webapp
+VOLUME /webapp
+WORKDIR /webapp
+
+CMD ["/usr/bin/supervisord"]
